@@ -31,6 +31,26 @@ npm start
 
 服务只听 `127.0.0.1:8787`。不要暴露到公网，否则任何人都能花掉 Gateway 的额度。Key 放在 `.env` 的 `AI_GATEWAY_API_KEY`，不要提交。
 
+Go 和 Rust 走同一份 JSON 合约，但不依赖 TypeScript SDK。它们直接 `POST https://ai-gateway.vercel.sh/v4/ai/evaluation-model`，带上 `ai-model-id`、`ai-evaluation-model-specification-version: 4` 和 `ai-gateway-protocol-version: 0.0.1`。迟滞、打断和目标绑定与 TypeScript 版相同。
+
+三门语言可以同时跑，默认端口错开。共享的 `.env` 里如果写了 `PORT=8787`，Go / Rust 不会读它，避免撞上 TypeScript 服务。它们只从 `.env` 读取 `AI_GATEWAY_API_KEY`、`JEV_MODEL`、`JEV_TIMEOUT_MS`、`JEV_MAX_RETRIES`。
+
+```powershell
+cd go
+go test
+go run .
+```
+
+Go 听 `127.0.0.1:8788`。`GET /health` 的 `language` 是 `go`。
+
+```powershell
+cd rust
+cargo test
+cargo run
+```
+
+Rust 听 `127.0.0.1:8789`。`GET /health` 的 `language` 是 `rust`。
+
 如果调用返回 403，且原文提到 credit card：key 已经被 Gateway 认出来了，是账号还没绑信用卡。到 Vercel 的 AI 页面加上卡、解锁免费额度后，同样的请求就会打到 Jev。
 
 模型默认 `typesafe-ai/jev`。字符串模型 id 走 Vercel AI Gateway，所以用的是 Gateway key，不是 TypeSafe 自己的 key。
