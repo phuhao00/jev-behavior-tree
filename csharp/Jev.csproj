@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Jev</RootNamespace>
+    <AssemblyName>jev</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Jev.Tests/**" />
+    <Content Remove="Jev.Tests/**" />
+    <None Remove="Jev.Tests/**" />
+    <EmbeddedResource Remove="Jev.Tests/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="System.Text.Json" />
+    <Using Include="System.Text.Json.Nodes" />
+    <Using Include="System.Text.Json.Serialization" />
+  </ItemGroup>
+</Project>

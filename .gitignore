@@ -5,3 +5,8 @@ dist/
 *.visual-check.*
 rust/target/
 go/*.exe
+csharp/bin/
+csharp/obj/
+csharp/Jev.Tests/bin/
+csharp/Jev.Tests/obj/
+cpp/build/
