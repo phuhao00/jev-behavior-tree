@@ -1,0 +1,38 @@
+{
+  "scene": {
+    "place": "ruined chapel door at dusk",
+    "timeOfDay": "dusk",
+    "weather": "clear, wind in the trees",
+    "recentEvents": ["a traveler appeared on the south road"]
+  },
+  "agent": {
+    "id": "rook",
+    "role": "guard",
+    "faction": "chapel",
+    "health": 1,
+    "currentTactic": "patrol",
+    "secondsOnTactic": 12,
+    "activity": "patrolling the chapel door"
+  },
+  "player": {
+    "id": "player",
+    "kind": "player",
+    "distance": 18,
+    "visible": true,
+    "health": 1,
+    "relation": "neutral",
+    "activity": "walking the south road, weapon sheathed"
+  },
+  "nearby": [
+    {
+      "id": "mira",
+      "kind": "npc",
+      "faction": "chapel",
+      "relation": "ally",
+      "distance": 6,
+      "visible": true,
+      "health": 1,
+      "activity": "sorting candles inside the door"
+    }
+  ]
+}

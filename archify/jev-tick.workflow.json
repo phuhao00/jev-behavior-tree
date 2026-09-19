@@ -1,0 +1,119 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "一拍直觉如何取代行为树",
+    "locale": "zh-CN",
+    "animation": "trace",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "game", "label": "游戏" },
+    { "id": "service", "label": "直觉服务" }
+  ],
+  "mainPath": ["blackboard", "tick", "compact", "questions", "jev", "policy", "play"],
+  "nodes": [
+    {
+      "id": "blackboard",
+      "lane": "game",
+      "col": 0,
+      "type": "frontend",
+      "label": "游戏黑板",
+      "sublabel": "距离、血量、当前战术"
+    },
+    {
+      "id": "world",
+      "lane": "game",
+      "col": 1,
+      "type": "cloud",
+      "label": "环境拍子",
+      "sublabel": "senseWorld"
+    },
+    {
+      "id": "downed",
+      "lane": "game",
+      "col": 2,
+      "type": "security",
+      "label": "不再询问",
+      "sublabel": "incapacitated"
+    },
+    {
+      "id": "play",
+      "lane": "game",
+      "col": 5,
+      "type": "frontend",
+      "label": "播这一拍",
+      "sublabel": "tactic + targetId"
+    },
+    {
+      "id": "tick",
+      "lane": "service",
+      "col": 1,
+      "type": "backend",
+      "label": "POST /v1/tick",
+      "sublabel": "src/server.ts"
+    },
+    {
+      "id": "compact",
+      "lane": "service",
+      "col": 2,
+      "type": "backend",
+      "label": "压缩局面",
+      "sublabel": "src/compact.ts"
+    },
+    {
+      "id": "questions",
+      "lane": "service",
+      "col": 3,
+      "type": "backend",
+      "label": "声明问题",
+      "sublabel": "choice · score · boolean",
+      "width": 168
+    },
+    {
+      "id": "jev",
+      "lane": "service",
+      "col": 4,
+      "type": "cloud",
+      "label": "typesafe-ai/jev",
+      "sublabel": "experimental_evaluate",
+      "width": 180
+    },
+    {
+      "id": "policy",
+      "lane": "service",
+      "col": 5,
+      "type": "security",
+      "label": "滞回策略",
+      "sublabel": "src/policy.ts"
+    }
+  ],
+  "edges": [
+    { "id": "send-tick", "from": "blackboard", "to": "tick", "label": "POST /v1/tick", "role": "main" },
+    { "id": "fan-agent", "from": "tick", "to": "compact", "label": "角色", "role": "main" },
+    { "id": "shape", "from": "compact", "to": "questions", "role": "main" },
+    { "id": "evaluate", "from": "questions", "to": "jev", "label": "一次 evaluate", "role": "main" },
+    { "id": "answers", "from": "jev", "to": "policy", "label": "选项与概率", "role": "main" },
+    { "id": "commit", "from": "policy", "to": "play", "label": "tactic + targetId", "role": "main" },
+    { "id": "dead", "from": "compact", "to": "downed", "label": "health ≤ 0", "role": "error" },
+    { "id": "fan-world", "from": "tick", "to": "world", "label": "并行", "role": "async" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "判断层",
+      "items": [
+        "选择器变成一次 choice，选项必须是游戏能执行的战术",
+        "条件变成 boolean 概率，灰区标成 uncertain"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "仍留在游戏里",
+      "items": [
+        "移动、动画、寻路不交给模型",
+        "置信度不够就保持上一拍，避免角色抖动"
+      ]
+    }
+  ]
+}

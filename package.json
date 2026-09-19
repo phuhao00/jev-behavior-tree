@@ -1,0 +1,24 @@
+{
+  "name": "jev-intuition",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node --env-file=.env --watch --import tsx src/server.ts",
+    "start": "node --env-file=.env --import tsx src/server.ts",
+    "demo": "node --env-file=.env --import tsx src/demo.ts",
+    "test": "node --import tsx --test src/intuition.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ai": "^7.0.105"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
