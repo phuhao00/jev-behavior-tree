@@ -4,7 +4,7 @@ use axum::http::{header, HeaderValue, StatusCode};
 use axum::response::{IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::Router;
-use jev_demo::{gateway_judge, model_id, sense_agent, sense_tick, sense_world};
+use jev_behavior_tree::{gateway_judge, model_id, sense_agent, sense_tick, sense_world};
 use serde_json::{json, Value};
 use std::env;
 use std::net::SocketAddr;
@@ -60,7 +60,7 @@ async fn health() -> Response {
 async fn impulse(body: Bytes) -> Response {
     run(body, |value| {
         sense_agent(&value, &gateway_judge).and_then(|v| {
-            serde_json::to_value(v).map_err(|_| jev_demo::err_bad(500, "无法编码响应"))
+            serde_json::to_value(v).map_err(|_| jev_behavior_tree::err_bad(500, "无法编码响应"))
         })
     })
     .await
@@ -69,7 +69,7 @@ async fn impulse(body: Bytes) -> Response {
 async fn world(body: Bytes) -> Response {
     run(body, |value| {
         sense_world(&value, &gateway_judge).and_then(|v| {
-            serde_json::to_value(v).map_err(|_| jev_demo::err_bad(500, "无法编码响应"))
+            serde_json::to_value(v).map_err(|_| jev_behavior_tree::err_bad(500, "无法编码响应"))
         })
     })
     .await
@@ -81,7 +81,7 @@ async fn tick(body: Bytes) -> Response {
 
 async fn run<F>(body: Bytes, call: F) -> Response
 where
-    F: FnOnce(Value) -> Result<Value, jev_demo::IntuitionError> + Send + 'static,
+    F: FnOnce(Value) -> Result<Value, jev_behavior_tree::IntuitionError> + Send + 'static,
 {
     let parsed = match parse_body(&body) {
         Ok(value) => value,
@@ -107,20 +107,20 @@ async fn not_found(req: Request) -> Response {
     json_response(StatusCode::NOT_FOUND, json!({"error": "没有这个接口"}))
 }
 
-fn parse_body(body: &[u8]) -> Result<Value, jev_demo::IntuitionError> {
+fn parse_body(body: &[u8]) -> Result<Value, jev_behavior_tree::IntuitionError> {
     if body.len() > 262_144 {
-        return Err(jev_demo::err_bad(413, "请求体超过 256KB"));
+        return Err(jev_behavior_tree::err_bad(413, "请求体超过 256KB"));
     }
     let text = std::str::from_utf8(body).unwrap_or("");
     if text.trim().is_empty() {
-        return Err(jev_demo::err_bad(400, "请求体为空"));
+        return Err(jev_behavior_tree::err_bad(400, "请求体为空"));
     }
-    serde_json::from_slice(body).map_err(|_| jev_demo::err_bad(400, "请求体不是合法 JSON"))
+    serde_json::from_slice(body).map_err(|_| jev_behavior_tree::err_bad(400, "请求体不是合法 JSON"))
 }
 
-fn error_response(err: jev_demo::IntuitionError) -> Response {
+fn error_response(err: jev_behavior_tree::IntuitionError) -> Response {
     let status = StatusCode::from_u16(err.status).unwrap_or(StatusCode::BAD_GATEWAY);
-    json_response(status, json!({"error": jev_demo::redact(&err.message)}))
+    json_response(status, json!({"error": jev_behavior_tree::redact(&err.message)}))
 }
 
 fn json_response(status: StatusCode, body: Value) -> Response {

@@ -1,5 +1,5 @@
 [package]
-name = "jev-demo"
+name = "jev-behavior-tree"
 version = "0.1.0"
 edition = "2021"
 description = "Jev intuition service. Direct AI Gateway evaluate call, same JSON contract as the TypeScript service."
